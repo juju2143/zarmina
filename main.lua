@@ -1,6 +1,6 @@
 --[[
 Zarmina Demo
-Sprites by DJ Omnimaga
+Sprites by DJ Omnimaga & Juju
 Engine by Juju
 --]]
 
@@ -9,6 +9,11 @@ Engine by Juju
 -- de gauche a droite pi de haut en bas
 
 function love.load()
+	loader = require("AdvTiledLoader.Loader")
+	loader.path = "maps/"
+	map = loader.load("testmap.tmx")
+	layer = map.tl["ground"]
+	objlayer = map.ol["objects"]
 	scale = 2
 	gametime = 0
 	gamestate = "introcredits"
@@ -18,7 +23,7 @@ function love.load()
 	character = {}
 	character.x = 100
 	character.y = 100
-	character.id = 0
+	character.id = 7
 	character.orientation = 2
 	character.state = 1
 	names = {[0]="Eljin", "Merix", "Zormy", "Guil", "Ji", "Manu", "Kyra", "Miyuki"}
@@ -26,7 +31,7 @@ function love.load()
 	next_time = love.timer.getMicroTime()
 	isNight = true
 	light = 6
-	
+--[[	
 	tilesImage = love.graphics.newImage("tiles.png")
 	tilesImage:setFilter("nearest", "linear")
 
@@ -55,11 +60,11 @@ function love.load()
 
 	tilemapX = #tilemap[1]
 	tilemapY = #tilemap
-
-	mapX = 100
-	mapY = 100
-
 	tilebg = love.graphics.newSpriteBatch(tilesImage, tilemapX*tilemapY*256)
+--]]
+
+	mapX = 0
+	mapY = 0
 
 	deffont = love.graphics.newFont("FFI.ttf", 24)
 	gamefont = love.graphics.newFont("FFI.ttf", 24*scale)
@@ -88,7 +93,7 @@ function love.keypressed(key)
 		end
 		if key == "p" then
 			character.id = character.id+1
-			if character.id >= 7 then
+			if character.id >= 8 then
 				character.id = 0
 			end
 		--[[
@@ -162,7 +167,7 @@ function love.update(dt)
 	end
 end
 
-function love.draw()
+function love.draw()	
 	if gamestate == "introcredits" then -- Intro
 		if gametime < 2 then
 			love.graphics.setColor(gametime*127.5, gametime*127.5, gametime*127.5)
@@ -179,9 +184,17 @@ function love.draw()
 		love.graphics.print("Press ENTER", 85*scale, 150*scale)
 		love.graphics.print("(C) 2012 Omnimaga", 60*scale, 180*scale)
 		love.graphics.setFont(deffont)		
-		love.graphics.print("v0.0.1a", 0, 215*scale)
+		love.graphics.print("v0.0.2-dev", 0, 215*scale)
 	elseif gamestate == "game" then -- We're in the game
 		love.graphics.setFont(gamefont)
+		--love.graphics.translate(mapX, mapY)
+		map:autoDrawRange(-mapX, -mapY, scale, 50)
+		love.graphics.push()
+		love.graphics.scale(scale)
+		love.graphics.translate(-mapX, -mapY)
+		map:draw()
+		love.graphics.pop()
+--[[
 		for i=1,#tilemap do
 			for j=1,#tilemap[i] do
 				if isNight then
@@ -198,6 +211,7 @@ function love.draw()
 				end
 			end
 		end
+--]]
 		love.graphics.setColor(255, 255, 255)
 		charquad = love.graphics.newQuad((character.id%4)*72+character.state*24, math.floor(character.id/4)*128+character.orientation*32, 24, 32, 288, 256)
 		love.graphics.drawq(characters, charquad, (character.x-12)*scale, (character.y-32)*scale, 0, scale)
@@ -220,9 +234,9 @@ function getDistance(x1, y1, x2, y2)
 end
 
 function detectCollision(x, y)
-	if tilemap[math.floor(y/16)+1][math.floor(x/16)+1] == 1 then
-		return true
-	else
-		return false
-	end
+	local tile = layer.tileData(math.floor(x/16), math.floor(y/16))
+	-- if tilemap[math.floor(y/16)+1][math.floor(x/16)+1] == 1
+	if tile == nil then return true end
+	if tile.properties.obstacle then return true end
+	return false
 end

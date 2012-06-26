@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="24" height="24" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16">
-  <image source="tiles.png" width="256" height="256"/>
+  <image source="../tiles.png" width="256" height="256"/>
+  <tile id="1">
+   <properties>
+    <property name="obstacle" value="1"/>
+   </properties>
+  </tile>
  </tileset>
- <layer name="Calque de Tile 1" width="24" height="24">
+ <objectgroup name="objects" width="24" height="24">
+  <object type="teleport" x="176" y="208" width="32" height="32">
+   <properties>
+    <property name="map" value="testmap"/>
+    <property name="x" value="18"/>
+    <property name="y" value="18"/>
+   </properties>
+  </object>
+  <object type="action" x="176" y="128" width="32" height="48">
+   <properties>
+    <property name="action" value="sayhello"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="ground" width="24" height="24">
   <data encoding="base64" compression="zlib">
    eJxjYmBgYKIxZqQRRjafmvYwYTGfWnagm0ev8Bk1nzzzsaVjYtM2sWrIkRuM5pOaXwab+UM1/MktewdD/ho1n/j0QKyZ2MynR/1Iq/ChJQYAdZgCww==
   </data>
