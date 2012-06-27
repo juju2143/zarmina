@@ -66,7 +66,7 @@ function love.load()
 	mapX = 0
 	mapY = 0
 
-	dofile("actions.lua")
+	actions = love.filesystem.load("actions.lua")()
 
 	deffont = love.graphics.newFont("FFI.ttf", 24)
 	gamefont = love.graphics.newFont("FFI.ttf", 24*scale)
