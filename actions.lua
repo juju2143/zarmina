@@ -1,4 +1,4 @@
-actions = {
+return {
 	sayhello = function()
 		love.graphics.setColor(0,0,255,255)
 		love.graphics.rectangle("line", 16*scale, 144*scale, 224*scale, 64*scale)
