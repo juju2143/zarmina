@@ -66,12 +66,14 @@ function love.load()
 	mapX = 0
 	mapY = 0
 
+	dofile("actions.lua")
+
 	deffont = love.graphics.newFont("FFI.ttf", 24)
 	gamefont = love.graphics.newFont("FFI.ttf", 24*scale)
 	love.graphics.setFont(gamefont)
 	love.graphics.setColor(255,255,255,255)
 	love.graphics.setBackgroundColor(0,0,0)
-	love.graphics.setCaption("Zarmina Engine Demo (Night Side of Zarmina)")
+	love.graphics.setCaption("Zarmina")
 	love.graphics.setMode(256*scale, 224*scale, false)
 	love.graphics.scale(scale, scale)
 end
@@ -215,7 +217,11 @@ function love.draw()
 		love.graphics.setColor(255, 255, 255)
 		charquad = love.graphics.newQuad((character.id%4)*72+character.state*24, math.floor(character.id/4)*128+character.orientation*32, 24, 32, 288, 256)
 		love.graphics.drawq(characters, charquad, (character.x-12)*scale, (character.y-32)*scale, 0, scale)
+		doAction(mapX+character.x, mapY+character.y)
 		love.graphics.setFont(deffont)
+		love.graphics.setColor(0, 0, 0, 127)
+		love.graphics.rectangle("fill", 0, 0, 64, 24)
+		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.print(names[character.id], 0, -3)
 		love.graphics.print("("..(mapX+character.x)..","..(mapY+character.y)..")", 0, 5)
 	end
@@ -239,4 +245,19 @@ function detectCollision(x, y)
 	if tile == nil then return true end
 	if tile.properties.obstacle then return true end
 	return false
+end
+
+function doAction(x, y)
+	for i=1,#objlayer.objects do
+		object = objlayer.objects[i]
+		if x >= object.x and x < object.x+object.width and y >= object.y and y < object.y+object.height then
+			if object.type == "action" then
+				actions[object.properties.action]()
+			elseif object.type == "teleport" then
+				map = loader.load(object.properties.map..".tmx")
+				mapX = object.properties.x-character.x
+				mapY = object.properties.y-character.y
+			end
+		end
+	end
 end
